@@ -11,7 +11,7 @@ from google.genai import types
 class GFSClient:
     """Wrapper for Google Generative File Search API"""
 
-    def __init__(self, api_key: str, model_id: str = "gemini-2.0-flash-exp"):
+    def __init__(self, api_key: str, model_id: str = "gemini-2.5-flash"):
         """
         Initialize GFS client.
 
@@ -44,7 +44,9 @@ class GFSClient:
         mime_type: Optional[str] = None
     ) -> types.File:
         """
-        Upload a file to GFS.
+        Upload a file to GFS (File API).
+        
+        Note: For File Search, it's often better to use upload_to_store directly.
 
         Args:
             file_path: Path to file
@@ -88,19 +90,21 @@ class GFSClient:
         Returns:
             Operation object
         """
-        # First upload the file
-        file_obj = self.upload_file(file_path)
-
-        # Then add to store
+        # Directly upload to the store using the file path
+        # This handles both uploading to File API and adding to Store
         operation = self.client.file_search_stores.upload_to_file_search_store(
-            name=store_name,
-            file=file_obj
+            file_search_store_name=store_name,
+            file=str(file_path)
         )
 
         if wait_for_completion:
             while not operation.done:
-                time.sleep(5)
-                operation = self.client.operations.get(operation)
+                time.sleep(2)
+                try:
+                    operation = self.client.operations.get(operation)
+                except Exception:
+                    # Fallback or ignore if get fails (e.g. transient)
+                    pass
 
         return operation
 
@@ -125,13 +129,15 @@ class GFSClient:
         Returns:
             GenerateContentResponse with answer and grounding
         """
-        # Create file search config
-        file_search = types.FileSearch(
-            file_search_store_names=store_names
+        if not store_names:
+            raise ValueError("At least one store name must be provided")
+        
+        # Configure the tool correctly using types.Tool and types.FileSearch
+        tool = types.Tool(
+            file_search=types.FileSearch(
+                file_search_store_names=store_names
+            )
         )
-
-        # Create tool
-        tool = types.Tool(file_search=file_search)
 
         # Generate response
         response = self.client.models.generate_content(
@@ -153,6 +159,7 @@ class GFSClient:
             List of FileSearchStore objects
         """
         stores = []
+        # list() returns an iterator/generator
         response = self.client.file_search_stores.list()
 
         for store in response:

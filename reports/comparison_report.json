@@ -1,0 +1,71 @@
+{
+  "gfs_summary": {
+    "total_queries": 5,
+    "successful": 5,
+    "failed": 0,
+    "mean_latency": 4.950587606430053,
+    "median_latency": 4.281064033508301,
+    "citation_rate": 0.0
+  },
+  "custom_rag_summary": {
+    "total_queries": 5,
+    "successful": 5,
+    "failed": 0,
+    "mean_total_latency": 5.13590259552002,
+    "median_total_latency": 5.090777635574341,
+    "mean_retrieval_time": 0.41404337882995607,
+    "mean_generation_time": 4.721856307983399
+  },
+  "comparison_matrix": [
+    {
+      "Aspect": "Setup Complexity",
+      "GFS": "Very Simple",
+      "Custom RAG": "Moderate"
+    },
+    {
+      "Aspect": "Indexing Time",
+      "GFS": "Managed (slower)",
+      "Custom RAG": "Fast (local)"
+    },
+    {
+      "Aspect": "Query Latency",
+      "GFS": "4.28s",
+      "Custom RAG": "5.09s"
+    },
+    {
+      "Aspect": "Cost (Indexing)",
+      "GFS": "$0.15/1M tokens",
+      "Custom RAG": "Free"
+    },
+    {
+      "Aspect": "Cost (Query)",
+      "GFS": "Context tokens",
+      "Custom RAG": "LLM only"
+    },
+    {
+      "Aspect": "Grounding/Citations",
+      "GFS": "Built-in",
+      "Custom RAG": "Manual"
+    },
+    {
+      "Aspect": "Customization",
+      "GFS": "Limited",
+      "Custom RAG": "Full control"
+    },
+    {
+      "Aspect": "Scalability",
+      "GFS": "Auto-scaled",
+      "Custom RAG": "Self-managed"
+    },
+    {
+      "Aspect": "Maintenance",
+      "GFS": "Minimal",
+      "Custom RAG": "Higher"
+    }
+  ],
+  "statistical_test": {
+    "t_statistic": -0.2186337970755827,
+    "p_value": 0.837637367874302,
+    "significant": false
+  }
+}
