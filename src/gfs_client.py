@@ -98,13 +98,18 @@ class GFSClient:
         )
 
         if wait_for_completion:
-            while not operation.done:
+            max_attempts = 60  # 2 minutos máximo
+            attempts = 0
+
+            while not operation.done and attempts < max_attempts:
                 time.sleep(2)
-                try:
-                    operation = self.client.operations.get(operation)
-                except Exception:
-                    # Fallback or ignore if get fails (e.g. transient)
-                    pass
+                attempts += 1
+                operation = self.client.operations.get(operation)
+
+            if not operation.done:
+                raise TimeoutError(
+                    f"Timeout esperando indexación después de {max_attempts * 2} segundos"
+                )
 
         return operation
 

@@ -2,6 +2,7 @@
 # Descripción: Implementación de un asistente corporativo usando la herramienta nativa de búsqueda de archivos.
 
 import os
+import sys
 import time
 from dotenv import load_dotenv
 from google import genai
@@ -65,21 +66,20 @@ sin el uso de la VPN corporativa activada.
     
     # C. Esperar a que se complete la subida
     print("Esperando a que se complete la indexación...")
-    while not operation.done:
-        time.sleep(2)
-        # Note: client.operations.get(operation) might be needed if operation object doesn't update itself
-        # The docs say: operation = client.operations.get(operation)
-        # But operation is an object, client.operations.get expects name or something?
-        # Let's try to follow the docs exactly: operation = client.operations.get(operation)
-        # Assuming the SDK handles the object overload.
-        try:
-             operation = client.operations.get(operation)
-        except Exception as e:
-             # Fallback if the SDK version behaves differently
-             print(f"Polling error (ignoring): {e}")
-             break
+    max_attempts = 60  # 2 minutos máximo
+    attempts = 0
 
-    print(f"Archivo procesado. Estado final: {operation.status if hasattr(operation, 'status') else 'Unknown'}")
+    while not operation.done and attempts < max_attempts:
+        time.sleep(2)
+        attempts += 1
+        # Actualizar el estado de la operación pasando el objeto directamente
+        operation = client.operations.get(operation)
+        print(f"  Intento {attempts}: done={operation.done}", flush=True)
+
+    if operation.done:
+        print(f"Archivo procesado exitosamente.")
+    else:
+        print(f"Advertencia: Timeout esperando indexación. Continuando de todas formas...")
 
     # PASO 5: CONFIGURACIÓN DEL MODELO CON LA HERRAMIENTA
     # Creamos la configuración para activar la herramienta de búsqueda de archivos
