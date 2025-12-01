@@ -59,27 +59,13 @@ sin el uso de la VPN corporativa activada.
 
     # B. Subir el archivo al Store
     print("Subiendo archivo al Store...")
-    operation = client.file_search_stores.upload_to_file_search_store(
+    client.file_search_stores.upload_to_file_search_store(
         file_search_store_name=store.name,
         file="politica_hibrida.txt"
     )
-    
-    # C. Esperar a que se complete la subida
-    print("Esperando a que se complete la indexación...")
-    max_attempts = 60  # 2 minutos máximo
-    attempts = 0
-
-    while not operation.done and attempts < max_attempts:
-        time.sleep(2)
-        attempts += 1
-        # Actualizar el estado de la operación pasando el objeto directamente
-        operation = client.operations.get(operation)
-        print(f"  Intento {attempts}: done={operation.done}", flush=True)
-
-    if operation.done:
-        print(f"Archivo procesado exitosamente.")
-    else:
-        print(f"Advertencia: Timeout esperando indexación. Continuando de todas formas...")
+    print("Archivo enviado al store para indexación.")
+    print("Esperando 10 segundos para que complete la indexación...")
+    time.sleep(10)
 
     # PASO 5: CONFIGURACIÓN DEL MODELO CON LA HERRAMIENTA
     # Creamos la configuración para activar la herramienta de búsqueda de archivos
@@ -110,10 +96,10 @@ sin el uso de la VPN corporativa activada.
             
             # Mostramos la respuesta
             print(f"Respuesta Gemini:\n{response.text}")
-            
+
             # Verificamos si usó citas (Grounding)
-            if response.candidates[0].grounding_metadata.search_entry_point:
-                 print("[Fuente citada del documento]")
+            if hasattr(response.candidates[0], 'grounding_metadata') and response.candidates[0].grounding_metadata:
+                print("[Fuente citada del documento]")
         except Exception as e:
             print(f"Error al generar respuesta: {e}")
 
