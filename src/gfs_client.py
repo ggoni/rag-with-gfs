@@ -125,18 +125,13 @@ class GFSClient:
         Returns:
             GenerateContentResponse with answer and grounding
         """
-        # Use the first store name (API expects single store)
-        store_name = store_names[0] if store_names else None
-
-        if not store_name:
-            raise ValueError("At least one store name is required")
-
-        # Create tool with FileSearchTool using file_search_store parameter
-        tool = types.Tool(
-            file_search_tool=types.FileSearchTool(
-                file_search_store=store_name
-            )
+        # Create file search config
+        file_search = types.FileSearch(
+            file_search_store_names=store_names
         )
+
+        # Create tool
+        tool = types.Tool(file_search=file_search)
 
         # Generate response
         response = self.client.models.generate_content(
