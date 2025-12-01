@@ -1,43 +1,43 @@
-# RAG with Google Generative File Search (GFS)
+# RAG con Google Generative File Search (GFS)
 
-Exploring and benchmarking Google's Generative File Search capabilities as a managed RAG solution.
+Exploración y evaluación de las capacidades de Google Generative File Search como solución RAG gestionada.
 
-## Project Overview
+## Descripción del Proyecto
 
-This project compares Google GFS (managed RAG) against custom RAG implementations to understand:
-- Performance characteristics (latency, relevance, cost)
-- Retrieval quality vs custom pipelines
-- Use case suitability
+Este proyecto compara Google GFS (RAG gestionado) con implementaciones RAG personalizadas para comprender:
+- Características de rendimiento (latencia, relevancia, costo)
+- Calidad de recuperación versus pipelines personalizados
+- Idoneidad según casos de uso
 
-## Setup
+## Configuración
 
-**Requirements**: Python 3.12, uv
+**Requisitos**: Python 3.12, uv
 
 ```bash
-# Install dependencies
+# Instalar dependencias
 uv sync
 
-# Set API key
-echo "GOOGLE_API_KEY=your_key_here" > .env
+# Configurar clave API
+echo "GOOGLE_API_KEY=su_clave_aqui" > .env
 ```
 
-## Project Structure
+## Estructura del Proyecto
 
-- `data/`: Document corpus (gitignored)
-- `notebooks/`: Jupyter exploratory notebooks
-- `src/`: Reusable modules
-- `models/`: GFS stores and custom RAG artifacts
-- `reports/`: Analysis outputs
+- `data/`: Corpus de documentos (excluido de git)
+- `notebooks/`: Notebooks exploratorios de Jupyter
+- `src/`: Módulos reutilizables
+- `models/`: Stores de GFS y artefactos RAG personalizados
+- `reports/`: Resultados de análisis
 
-## Development
+## Desarrollo
 
 ```bash
-# Run EDA notebook
+# Ejecutar notebook EDA
 jupyter notebook notebooks/01_data_exploration.ipynb
 
-# Run tests
+# Ejecutar pruebas
 pytest
 
-# Format code
+# Formatear código
 ruff format .
 ```
