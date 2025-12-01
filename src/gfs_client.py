@@ -125,20 +125,18 @@ class GFSClient:
         Returns:
             GenerateContentResponse with answer and grounding
         """
-        # Build file search config
-        file_search_config = types.FileSearch(
-            file_search_store_names=store_names
+        # Use the first store name (API expects single store)
+        store_name = store_names[0] if store_names else None
+
+        if not store_name:
+            raise ValueError("At least one store name is required")
+
+        # Create tool with FileSearchTool using file_search_store parameter
+        tool = types.Tool(
+            file_search_tool=types.FileSearchTool(
+                file_search_store=store_name
+            )
         )
-
-        if top_k is not None:
-            file_search_config.top_k = top_k
-        if metadata_filter is not None:
-            file_search_config.metadata_filter = metadata_filter
-
-        # Create tool
-        tool = types.Tool(file_search_tool=types.FileSearchTool(
-            file_search=file_search_config
-        ))
 
         # Generate response
         response = self.client.models.generate_content(
